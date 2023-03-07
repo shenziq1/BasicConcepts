@@ -4,14 +4,17 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.ViewModel
 import com.example.hiltviewmodel.ui.theme.HiltViewModelTheme
+import com.example.hiltviewmodel.ui.theme.MainViewModel
 import dagger.hilt.android.AndroidEntryPoint
+import dagger.hilt.android.lifecycle.HiltViewModel
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
@@ -24,22 +27,32 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    MainScreen("Android")
+                    MainScreen()
                 }
             }
         }
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MainScreen(name: String) {
-    Text(text = "Hello $name!")
+fun MainScreen(viewModel: MainViewModel = hiltViewModel()) {
+    val value = viewModel.uiState.value.myValue
+    Scaffold(topBar = {
+        CenterAlignedTopAppBar(title = { Text(value) })
+    }) { paddingValues ->
+        OutlinedTextField(
+            value = value,
+            onValueChange = { viewModel.editUiState(it) },
+            modifier = Modifier.padding(paddingValues)
+        )
+    }
 }
 
 @Preview(showBackground = true)
 @Composable
 fun DefaultPreview() {
     HiltViewModelTheme {
-        MainScreen("Android")
+        MainScreen()
     }
 }
