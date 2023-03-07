@@ -3,6 +3,7 @@ package com.example.statehoisting
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.*
@@ -20,14 +21,14 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    MainScreen()
+                    MainScreen2()
                 }
             }
         }
     }
 }
 
-
+//Before StateHoisting
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MainScreen() {
@@ -42,6 +43,33 @@ fun MainScreen() {
         )
     }
 }
+
+//After StateHoisting
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun MainScreen2() {
+    var value by remember { mutableStateOf("") }
+    Scaffold(
+        topBar = { TopAppBar(value = value) }
+    ) { paddingValues ->
+        MainContent(value = value, onValueChange = { value = it }, paddingValues = paddingValues)
+    }
+}
+
+@Composable
+fun TopAppBar(value: String) {
+    CenterAlignedTopAppBar(title = { Text(value) })
+}
+
+@Composable
+fun MainContent(value: String, onValueChange: (String) -> Unit, paddingValues: PaddingValues) {
+    OutlinedTextField(
+        value = value,
+        onValueChange = { onValueChange(it) },
+        modifier = Modifier.padding(paddingValues)
+    )
+}
+
 
 @Preview(showBackground = true)
 @Composable
