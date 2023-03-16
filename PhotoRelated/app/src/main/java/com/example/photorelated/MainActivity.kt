@@ -36,7 +36,7 @@ class MainActivity : ComponentActivity() {
                     val testStrings = remember {
                         mutableStateListOf<String>()
                     }
-                    
+
 //                    LazyColumn(){
 //                        item{
 //                            OpenGalleryButton { imagesSelected.add(it) }
@@ -97,17 +97,14 @@ fun OpenCameraButton(onPhotoTaken: (Uri) -> Unit) {
         mutableStateOf<Uri?>(null)
     }
     val context = LocalContext.current
-    val coroutineScope = rememberCoroutineScope()
 
     Button(
         modifier = Modifier.padding(top = 16.dp),
         onClick = {
-            coroutineScope.launch {
-                val uri = ComposeFileProvider.getImageUri(context)
-                imageUri = uri
-                hasImage = false
-                cameraLauncher.launch(uri)
-            }
+            val uri = ComposeFileProvider.getImageUri(context)
+            imageUri = uri
+            hasImage = false
+            cameraLauncher.launch(uri)
         },
     ) {
         Text(
@@ -120,9 +117,9 @@ fun OpenCameraButton(onPhotoTaken: (Uri) -> Unit) {
 }
 
 @Composable
-fun TestStringButton(onButtonClicked: (String) -> Unit){
+fun TestStringButton(onButtonClicked: (String) -> Unit) {
     Button(onClick = { onButtonClicked("test") }) {
         Text(text = "test")
     }
-    
+
 }
