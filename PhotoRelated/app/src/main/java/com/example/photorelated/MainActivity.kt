@@ -15,6 +15,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import coil.compose.rememberAsyncImagePainter
 import com.example.photorelated.ui.theme.PhotoRelatedTheme
 
 class MainActivity : ComponentActivity() {
@@ -27,7 +28,10 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    OpenGalleryScreen()
+                    val imagesSelected = remember {
+                        mutableStateListOf<Uri>()
+                    }
+                    OpenGalleryScreen(imagesSelected){ imagesSelected.add(it)}
                 }
             }
         }
@@ -36,15 +40,32 @@ class MainActivity : ComponentActivity() {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun OpenGalleryScreen() {
-    Text(text = "Demo for open gallery")
+fun OpenGalleryScreen(imagesSelected: List<Uri>, onImageSelected: (Uri) -> Unit) {
 
-}
+    val galleryLauncher =
+        rememberLauncherForActivityResult(ActivityResultContracts.GetContent()) {
+            onImageSelected(it)
+        }
 
-@Preview(showBackground = true)
-@Composable
-fun DefaultPreview() {
-    PhotoRelatedTheme {
-        OpenGalleryScreen()
+    Scaffold { paddingValues ->
+        Column(modifier = Modifier.padding(paddingValues)) {
+            if (imagesSelected != listOf(Uri.EMPTY))
+                imagesSelected.forEach {
+                    Image(painter = rememberAsyncImagePainter(it), contentDescription = null)
+                }
+            Button(onClick = { galleryLauncher.launch("image/*") }) {
+                Text(text = "open gallery")
+            }
+        }
+
     }
+
 }
+
+//@Preview(showBackground = true)
+//@Composable
+//fun DefaultPreview() {
+//    PhotoRelatedTheme {
+//        OpenGalleryScreen()
+//    }
+//}
