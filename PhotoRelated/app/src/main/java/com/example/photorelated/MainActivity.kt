@@ -90,11 +90,14 @@ fun OpenGalleryButton(onImageSelected: (Uri) -> Unit) {
 @Composable
 fun OpenCameraButton(onPhotoTaken: (Uri) -> Unit) {
     var hasImage by remember { mutableStateOf(false) }
-    val cameraLauncher = rememberLauncherForActivityResult(ActivityResultContracts.TakePicture()) {
-        hasImage = it
-    }
     var imageUri by remember {
         mutableStateOf<Uri?>(null)
+    }
+    val cameraLauncher = rememberLauncherForActivityResult(ActivityResultContracts.TakePicture()) {
+        hasImage = it
+        if (hasImage && imageUri != null) {
+            onPhotoTaken(imageUri!!)
+        }
     }
     val context = LocalContext.current
 
@@ -110,9 +113,6 @@ fun OpenCameraButton(onPhotoTaken: (Uri) -> Unit) {
         Text(
             text = "take photo"
         )
-    }
-    if (hasImage && imageUri != null) {
-        onPhotoTaken(imageUri!!)
     }
 }
 
